@@ -1,0 +1,17 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!--Package versions specified here will be inherited by all other project package references.-->
+    <!--When specifying a package reference in a project simply exclude the version.-->
+    <!--e.g. <PackageReference Include="NUnit" />-->
+    <ItemGroup>
+        <PackageReference Update="NUnit" Version="[3.13.2]" />
+        <PackageReference Update="Xamarin.Forms" Version="5.0.0.2291" />
+        <PackageReference Update="Xamarin.Android.Support.Design" Version="28.0.0.3" />
+        <PackageReference Update="Xamarin.Android.Support.v7.AppCompat" Version="28.0.0.3" />
+        <PackageReference Update="Xamarin.Android.Support.v4" Version="28.0.0.3" />
+        <PackageReference Update="Xamarin.Android.Support.v7.CardView" Version="28.0.0.3" />
+        <PackageReference Update="Xamarin.Android.Support.v7.MediaRouter" Version="28.0.0.3" />
+        <PackageReference Update="Xamarin.AndroidX.MediaRouter" Version="1.2.5.2" />
+        <PackageReference Update="Xamarin.AndroidX.Palette" Version="1.0.0.10" />
+        <PackageReference Update="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.13" />
+    </ItemGroup>
+</Project>

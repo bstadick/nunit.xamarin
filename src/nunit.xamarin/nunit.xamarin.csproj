@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>NUnit</Company>
     <Product>NUnit 3 Xamarin Runner</Product>
     <Copyright>Copyright (C) 2018, Rob Prouse</Copyright>
-    <Version Condition="'$(Version)' == ''">3.10.1</Version>
+    <Version Condition="'$(Version)' == ''">3.13.2</Version>
 
     <!-- NuGet Package Info -->
     <PackageId>nunit.xamarin</PackageId>
@@ -28,8 +28,8 @@ Supported Xamarin platforms:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="[3.10.1]" />
-    <PackageReference Include="Xamarin.Forms" Version="2.5.0.280555" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="Xamarin.Forms" />
   </ItemGroup>
 
   <ItemGroup>

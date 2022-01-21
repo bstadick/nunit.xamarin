@@ -1,15 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2005
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DABD2667-0EF4-4814-8353-8675E1C8F95E}"
-	ProjectSection(SolutionItems) = preProject
-		.gitattributes = .gitattributes
-		.gitignore = .gitignore
-		build.cake = build.cake
-		README.md = README.md
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{B3AE763A-DC9C-4F5D-B5F0-97A1B10D147B}"
 EndProject
@@ -24,6 +18,31 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.runner.tests.iOS", "tests\nunit.runner.tests.iOS\nunit.runner.tests.iOS.csproj", "{17A2B97C-56EA-40B8-8901-5E0728876657}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.runner.tests.uwp", "tests\nunit.runner.tests.uwp\nunit.runner.tests.uwp.csproj", "{B0040786-1AB0-4FD6-93D2-E5BA330FB4BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build Scripts", "Build Scripts", "{6F3990FD-D87F-4142-BA26-7A1F7B9AC8D9}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		build.cake = build.cake
+		build.ps1 = build.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{52D5DB54-DDCA-4623-AEBE-92D0618B523C}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.Targets = Directory.Build.Targets
+		NuGet.config = NuGet.config
+		nunit.xamarin.sln.DotSettings = nunit.xamarin.sln.DotSettings
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "About", "About", "{BD9C579D-2803-4895-9624-7B1F8E4CF94A}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGES.md = CHANGES.md
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -325,6 +344,9 @@ Global
 		{FEC118A7-A5B1-4058-898E-2DE513708A07} = {040381B1-C9E8-4D7C-8A60-EF4C343C7374}
 		{17A2B97C-56EA-40B8-8901-5E0728876657} = {040381B1-C9E8-4D7C-8A60-EF4C343C7374}
 		{B0040786-1AB0-4FD6-93D2-E5BA330FB4BC} = {040381B1-C9E8-4D7C-8A60-EF4C343C7374}
+		{6F3990FD-D87F-4142-BA26-7A1F7B9AC8D9} = {DABD2667-0EF4-4814-8353-8675E1C8F95E}
+		{52D5DB54-DDCA-4623-AEBE-92D0618B523C} = {DABD2667-0EF4-4814-8353-8675E1C8F95E}
+		{BD9C579D-2803-4895-9624-7B1F8E4CF94A} = {DABD2667-0EF4-4814-8353-8675E1C8F95E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3AEEC270-D641-4F52-BEB0-DAAF90328CED}
