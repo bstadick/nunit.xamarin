@@ -60,15 +60,17 @@ namespace NUnit.Runner.Helpers
         /// <summary>
         ///     Executes the test assemblies.
         /// </summary>
+        /// <param name="filter">The xml test filter of tests to run.</param>
         /// <returns>The test run results.</returns>
-        public async Task<TestRunResult> ExecuteTests()
+        public async Task<TestRunResult> ExecuteTests(ITestFilter filter = null)
         {
+            ITestFilter testFilter = filter ?? TestFilter.Empty;
             TestRunResult resultPackage = new TestRunResult();
 
             foreach ((Assembly assembly, Dictionary<string, object> options) in _testAssemblies)
             {
                 NUnitTestAssemblyRunner runner = await LoadTestAssemblyAsync(assembly, options).ConfigureAwait(false);
-                ITestResult result = await Task.Run(() => runner.Run(TestListener.NULL, TestFilter.Empty))
+                ITestResult result = await Task.Run(() => runner.Run(TestListener.NULL, testFilter))
                                                .ConfigureAwait(false);
                 resultPackage.AddResult(result);
             }
