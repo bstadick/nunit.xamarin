@@ -1,6 +1,6 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2015 NUnit Project
-//
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,42 +27,72 @@ using NUnit.Framework.Interfaces;
 
 namespace NUnit.Runner.ViewModel
 {
-    class ResultsViewModel : BaseViewModel
+    /// <summary>
+    ///     The test suite results view model that holds the collection of each individual test <see cref="ResultViewModel" />.
+    /// </summary>
+    internal class ResultsViewModel : BaseViewModel
     {
+        #region Public Properties
+
         /// <summary>
-        /// Constructs the view model
+        ///     Gets the collection of test results added to the view model.
         /// </summary>
-        /// <param name="results">The package of all results in run</param>
-        /// <param name="viewAll">If true, views all tests, otherwise only shows those
-        /// that did not pass</param>
-        public ResultsViewModel(IReadOnlyCollection<ITestResult> results, bool viewAll)
+        public ObservableCollection<ResultViewModel> Results { get; }
+
+        /// <summary>
+        ///     Gets if the view model shows all results, otherwise only shows those that did not pass.
+        /// </summary>
+        public bool IsAllResults { get; }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs a <see cref="ResultsViewModel"/> with a collection of <see cref="ITestResult"/> and select filtering.
+        /// </summary>
+        /// <param name="results">The collection of the results in a test run.</param>
+        /// <param name="viewAll">
+        ///     <see langword="true" /> to add all tests, otherwise only shows those that did not pass.
+        /// </param>
+        public ResultsViewModel(IEnumerable<ITestResult> results, bool viewAll)
         {
             Results = new ObservableCollection<ResultViewModel>();
-            foreach (var result in results)
+            IsAllResults = viewAll;
+            foreach (ITestResult result in results)
+            {
                 AddTestResults(result, viewAll);
+            }
         }
 
-        /// <summary>
-        /// A list of tests that did not pass
-        /// </summary>
-        public ObservableCollection<ResultViewModel> Results { get; private set; }
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
-        /// Add all tests that did not pass to the Results collection
+        ///     Recursively adds the test results to the <see cref="Results" /> collection.
         /// </summary>
-        /// <param name="result"></param>
-        /// <param name="viewAll"></param>
+        /// <param name="result">The test or test suite results to add.</param>
+        /// <param name="viewAll">
+        ///     <see langword="true" /> to add all tests, otherwise only shows those that did not pass.
+        /// </param>
         private void AddTestResults(ITestResult result, bool viewAll)
         {
             if (result.Test.IsSuite)
             {
-                foreach (var childResult in result.Children)
+                // Recursively add test results
+                foreach (ITestResult childResult in result.Children)
+                {
                     AddTestResults(childResult, viewAll);
+                }
             }
             else if (viewAll || result.ResultState.Status != TestStatus.Passed)
             {
+                // Add result if all results is selected or if result is not passed
                 Results.Add(new ResultViewModel(result));
             }
         }
+
+        #endregion
     }
 }

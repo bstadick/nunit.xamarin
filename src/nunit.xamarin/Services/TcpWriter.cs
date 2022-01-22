@@ -1,6 +1,6 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2016 NUnit Project
-//
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -23,108 +23,131 @@
 
 using System;
 using System.IO;
-
-using System.Threading.Tasks;
-using Xamarin.Forms;
-using NUnit.Runner.Messages;
-using System.Threading;
-
-#if NETFX_CORE
-using Windows.Networking;
-using Windows.Networking.Sockets;
-#else
 using System.Net.Sockets;
-#endif
+using System.Text;
+using System.Threading.Tasks;
+using NUnit.Runner.Messages;
+using Xamarin.Forms;
 
 namespace NUnit.Runner.Services
 {
     /// <summary>
-    /// Redirects output to a Tcp connection
+    ///     Redirects stream output to a Tcp connection.
     /// </summary>
-    class TcpWriter : TextWriter
+    internal class TcpWriter : TextWriter
     {
-#if NETFX_CORE
-        StreamSocket _socket;
-#endif
-        StreamWriter _writer;
-        readonly TcpWriterInfo _info;
+        #region Private Fields
 
+        /// <summary>
+        ///     Holds the Tcp writer connection information.
+        /// </summary>
+        private readonly TcpWriterInfo _info;
+
+        /// <summary>
+        ///     Holds the underlying stream writer.
+        /// </summary>
+        private StreamWriter _writer;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets the Encoding of the stream.
+        /// </summary>
+        public override Encoding Encoding
+        {
+            get { return Encoding.UTF8; }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs a <see cref="TcpWriter" /> to write stream output to a Tcp connection.
+        /// </summary>
+        /// <param name="info">The Tcp writer connection information.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="info" /> is null.</exception>
         public TcpWriter(TcpWriterInfo info)
         {
             if (info == null)
+            {
                 throw new ArgumentNullException(nameof(info));
+            }
 
             _info = info;
         }
 
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        ///     Opens the Tcp connection.
+        /// </summary>
+        /// <returns>A <see cref="Task" /> to await.</returns>
         public async Task Connect()
         {
-#if NETFX_CORE
             try
             {
-                _socket = new StreamSocket();
-                var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(_info.Timeout));
-
-                await _socket.ConnectAsync(new HostName(_info.Hostname), _info.Port.ToString()).AsTask();
-                _writer = new StreamWriter(_socket.OutputStream.AsStreamForWrite());
-            }
-            catch (TaskCanceledException)
-            {
-                MessagingCenter.Send(new ErrorMessage($"Timeout connecting to {_info} after {_info.Timeout} seconds.\n\nIs your server running?"), ErrorMessage.Name);
-            }
-            catch (Exception ex)
-            {
-                MessagingCenter.Send(new ErrorMessage(ex.Message), ErrorMessage.Name);
-            }
-#else
-            try
-            {
+                // Open the Tcp connection
                 TcpClient client = new TcpClient();
                 Task connect = client.ConnectAsync(_info.Hostname, _info.Port);
                 Task timeout = Task.Delay(TimeSpan.FromSeconds(_info.Timeout));
-                if(await Task.WhenAny(connect, timeout) == timeout)
+                if (await Task.WhenAny(connect, timeout) == timeout)
                 {
                     throw new TimeoutException();
                 }
+
+                // Get the underlying client stream
                 NetworkStream stream = client.GetStream();
+
+                // Create the stream writer to write to
                 _writer = new StreamWriter(stream);
             }
             catch (TimeoutException)
             {
-                MessagingCenter.Send(new ErrorMessage($"Timeout connecting to {_info} after {_info.Timeout} seconds.\n\nIs your server running?"), ErrorMessage.Name);
+                MessagingCenter.Send(
+                    new ErrorMessage(
+                        $"Timeout connecting to {_info} after {_info.Timeout} seconds.\n\nIs your server running?"),
+                    ErrorMessage.Name);
             }
             catch (Exception ex)
             {
                 MessagingCenter.Send(new ErrorMessage(ex.Message), ErrorMessage.Name);
             }
-#endif
         }
 
+        #endregion
+
+        #region Implementation of TcpWriter
+
+        /// <inheritdoc cref="TcpWriter.Write(char)" />
         public override void Write(char value)
         {
             _writer?.Write(value);
         }
 
+        /// <inheritdoc cref="TcpWriter.Write(string)" />
         public override void Write(string value)
         {
             _writer?.Write(value);
         }
 
+        /// <inheritdoc cref="TcpWriter.WriteLine(string)" />
         public override void WriteLine(string value)
         {
             _writer?.WriteLine(value);
             _writer?.Flush();
         }
 
-        public override System.Text.Encoding Encoding => System.Text.Encoding.UTF8;
-
+        /// <inheritdoc cref="TcpWriter.Dispose(bool)" />
         protected override void Dispose(bool disposing)
         {
             _writer?.Dispose();
-#if NETFX_CORE
-            _socket?.Dispose();
-#endif
         }
+
+        #endregion
     }
 }

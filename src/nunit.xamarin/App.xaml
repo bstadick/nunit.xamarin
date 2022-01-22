@@ -6,12 +6,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <!-- Visual Elements -->
-            <Style x:Key="defaultBackground" TargetType="VisualElement">
-                <Setter Property="BackgroundColor" Value="#F7F7F7" />
-            </Style>
-            <Style x:Key="windowsBackground" TargetType="VisualElement">
-                <Setter Property="BackgroundColor" Value="#000000" />
-            </Style>
+            <Color x:Key="DefaultBackground">White</Color>
+            <Color x:Key="WindowsBackground">White</Color>
             
         	<!-- Buttons -->
             <Style TargetType="Button">

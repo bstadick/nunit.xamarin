@@ -1,6 +1,6 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2015 NUnit Project
-//
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,51 +24,58 @@
 using System;
 using System.Text;
 using NUnit.Framework.Interfaces;
-using NUnit.Runner.Extensions;
-using Xamarin.Forms;
 
 namespace NUnit.Runner.ViewModel
 {
-    class TestViewModel : BaseViewModel
+    /// <summary>
+    ///     The individual test result detailed view model.
+    /// </summary>
+    internal class TestViewModel : ResultViewModel
     {
-        public TestViewModel(ITestResult result)
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets the test result output.
+        /// </summary>
+        public string Output { get; }
+
+        /// <summary>
+        ///     Gets the test results stack trace.
+        /// </summary>
+        public string StackTrace { get; }
+
+        /// <summary>
+        ///     Gets the test properties.
+        /// </summary>
+        public string Properties { get; }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs a <see cref="TestViewModel"/> with an individual <see cref="ITestResult"/>.
+        /// </summary>
+        /// <param name="result">The result of an individual test.</param>
+        public TestViewModel(ITestResult result) : base(result)
         {
-            TestResult = result;
-            Message = StringOrNone(result.Message);
             Output = StringOrNone(result.Output);
             StackTrace = StringOrNone(result.StackTrace);
 
-            var builder = new StringBuilder();
+            // Format test properties
+            StringBuilder propStringBuilder = new StringBuilder();
             IPropertyBag props = result.Test.Properties;
             foreach (string key in props.Keys)
             {
-                foreach (var value in props[key])
+                foreach (object value in props[key])
                 {
-                    builder.AppendFormat("{0} = {1}{2}", key, value, Environment.NewLine);
+                    propStringBuilder.AppendFormat("{0} = {1}{2}", key, value, Environment.NewLine);
                 }
             }
-            Properties = StringOrNone(builder.ToString());
+
+            Properties = StringOrNone(propStringBuilder.ToString());
         }
 
-        public ITestResult TestResult { get; private set; }
-        public string Message { get; private set; }
-        public string Output { get; private set; }
-        public string StackTrace { get; private set; }
-        public string Properties { get; private set; }
-
-        /// <summary>
-        /// Gets the color for this result.
-        /// </summary>
-        public Color Color
-        {
-            get { return TestResult.ResultState.Color(); }
-        }
-
-        private string StringOrNone(string str)
-        {
-            if (string.IsNullOrWhiteSpace(str))
-                return "<none>";
-            return str;
-        }
+        #endregion
     }
 }

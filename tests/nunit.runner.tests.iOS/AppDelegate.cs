@@ -1,6 +1,6 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2015 NUnit Project
-//
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -21,13 +21,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
-using System;
 using System.IO;
 using Foundation;
-
 using NUnit.Runner.Services;
-
 using UIKit;
+using Xamarin.Forms.Platform.iOS;
 
 namespace NUnit.Runner.Tests
 {
@@ -35,7 +33,9 @@ namespace NUnit.Runner.Tests
     // User Interface of the application, as well as listening (and optionally responding) to
     // application events from iOS.
     [Register("AppDelegate")]
-    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    // ReSharper disable once PartialTypeWithSinglePart
+    // ReSharper disable once RedundantNameQualifier
+    public partial class AppDelegate : FormsApplicationDelegate
     {
         //
         // This method is invoked when the application has loaded and is ready to run. In this
@@ -46,10 +46,11 @@ namespace NUnit.Runner.Tests
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            // ReSharper disable once RedundantNameQualifier
             global::Xamarin.Forms.Forms.Init();
 
             // This will load all tests within the current project
-            var nunit = new NUnit.Runner.App();
+            App nunit = new App();
 
             // If you want to add tests in another assembly
             //nunit.AddTestAssembly(typeof(MyTests).Assembly);
@@ -74,7 +75,10 @@ namespace NUnit.Runner.Tests
                 CreateXmlResultFile = true,
 
                 // Choose a different path for the xml result file (ios file share / library directory)
-                ResultFilePath = Path.Combine(NSFileManager.DefaultManager.GetUrls(NSSearchPathDirectory.LibraryDirectory, NSSearchPathDomain.User)[0].Path, "Results.xml")
+                ResultFilePath =
+                    Path.Combine(
+                        NSFileManager.DefaultManager.GetUrls(NSSearchPathDirectory.LibraryDirectory,
+                            NSSearchPathDomain.User)[0].Path, "Results.xml")
             };
 
             LoadApplication(nunit);

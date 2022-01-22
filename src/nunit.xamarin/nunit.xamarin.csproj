@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>NUnit</Company>
     <Product>NUnit 3 Xamarin Runner</Product>
-    <Copyright>Copyright (C) 2018, Rob Prouse</Copyright>
+    <Copyright>Copyright (C) 2022, Rob Prouse</Copyright>
     <Version Condition="'$(Version)' == ''">3.13.2</Version>
 
     <!-- NuGet Package Info -->
@@ -25,6 +25,8 @@ Supported Xamarin platforms:
 - iOS
 - Windows 10 Universal Apps
     </Description>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

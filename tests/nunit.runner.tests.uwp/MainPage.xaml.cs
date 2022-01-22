@@ -1,5 +1,6 @@
-﻿// Copyright (c) 2018 NUnit Project
-//
+﻿// ***********************************************************************
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -7,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -20,9 +21,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
-using System.Reflection;
 using System.Collections.Generic;
-
+using System.Reflection;
 using NUnit.Runner.Services;
 
 namespace NUnit.Runner.Tests
@@ -35,15 +35,15 @@ namespace NUnit.Runner.Tests
 
             // Windows Universal will not load all tests within the current project,
             // you must do it explicitly below
-            var nunit = new NUnit.Runner.App();
+            Runner.App nunit = new Runner.App();
 
             // If you want to add tests in another assembly, add a reference and
             // duplicate the following line with a type from the referenced assembly
             //nunit.AddTestAssembly(typeof(MainPage).GetTypeInfo().Assembly);
             // Or, if you want to add tests with an extra test options dictionary
-            var parameters = new Dictionary<string, string> { { "Parameter", "Value" } };
-            nunit.AddTestAssembly(typeof(MainPage).GetTypeInfo().Assembly, 
-                new Dictionary<string, object> { { FrameworkPackageSettings.TestParametersDictionary, parameters} });
+            Dictionary<string, string> parameters = new Dictionary<string, string> { { "Parameter", "Value" } };
+            nunit.AddTestAssembly(typeof(MainPage).GetTypeInfo().Assembly,
+                new Dictionary<string, object> { { FrameworkPackageSettings.TestParametersDictionary, parameters } });
 
             // Available options for testing
             nunit.Options = new TestOptions

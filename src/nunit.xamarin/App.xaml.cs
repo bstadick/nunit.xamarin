@@ -1,5 +1,6 @@
-﻿// Copyright (c) 2015 CNUnit Project
-//
+﻿// ***********************************************************************
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -7,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -20,8 +21,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
-using System.Reflection;
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Runner.Services;
 using NUnit.Runner.View;
 using NUnit.Runner.ViewModel;
@@ -30,33 +31,62 @@ using Xamarin.Forms;
 namespace NUnit.Runner
 {
     /// <summary>
-    /// The NUnit Xamarin test runner
+    ///     The entry point for the NUnit Xamarin test runner.
     /// </summary>
-	public partial class App : Application
+    public partial class App : Application
     {
-        private readonly SummaryViewModel _model;
+        #region Private Fields
 
         /// <summary>
-        /// Constructs a new app adding the current assembly to be tested
+        ///     Holds the test runner's underlying <see cref="SummaryViewModel"/>.
         /// </summary>
-		public App ()
-		{
-            InitializeComponent ();
+        private readonly SummaryViewModel _model;
 
-            if(Device.RuntimePlatform == Device.UWP)
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets or sets the user <see cref="TestOptions" /> for the test suite.
+        /// </summary>
+        public TestOptions Options
+        {
+            get { return _model.Options; }
+            set { _model.Options = value; }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs a new <see cref="App"/>, adding the current assembly as an assembly to be tested.
+        /// </summary>
+        public App()
+        {
+            InitializeComponent();
+
+            // Change the default background to the Windows background if running on Windows
+            if (Device.RuntimePlatform == Device.UWP)
             {
-                Resources["defaultBackground"] = Resources["windowsBackground"];
+                Resources["DefaultBackground"] = Resources["WindowsBackground"];
             }
 
             _model = new SummaryViewModel();
+
+            // Set the main page as the summary view page
             MainPage = new NavigationPage(new SummaryView(_model));
-#if !NETFX_CORE
+
+            // Add the current assembly as a test assembly
             AddTestAssembly(Assembly.GetCallingAssembly());
-#endif
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
-        /// Adds an assembly to be tested.
+        ///     Adds an assembly to be tested to the test suite.
         /// </summary>
         /// <param name="testAssembly">The test assembly.</param>
         /// <param name="options">An optional dictionary of options for loading the assembly.</param>
@@ -65,13 +95,6 @@ namespace NUnit.Runner
             _model.AddTest(testAssembly, options);
         }
 
-        /// <summary>
-        /// User options for the test suite.
-        /// </summary>
-        public TestOptions Options
-        {
-            get { return _model.Options; }
-            set { _model.Options = value; }
-        }
+        #endregion
     }
 }

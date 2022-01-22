@@ -8,6 +8,10 @@
 // ReSharper disable IntroduceOptionalParameters.Global
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable InconsistentNaming
+// ReSharper disable NotNullMemberIsNotInitialized
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+// ReSharper disable RedundantAttributeUsageProperty
+// ReSharper disable UnusedType.Global
 
 namespace NUnit.Runner.Annotations
 {
@@ -146,7 +150,7 @@ namespace NUnit.Runner.Annotations
   /// </list>
   /// If method has single input parameter, it's name could be omitted.<br/>
   /// Using <c>halt</c> (or <c>void</c>/<c>nothing</c>, which is the same)
-  /// for method output means that the methos doesn't return normally.<br/>
+  /// for method output means that the method doesn't return normally.<br/>
   /// <c>canbenull</c> annotation is only applicable for output parameters.<br/>
   /// You can use multiple <c>[ContractAnnotation]</c> for each FDT row,
   /// or use single attribute with rows separated by semicolon.<br/>
@@ -526,7 +530,7 @@ namespace NUnit.Runner.Annotations
   /// for MVC views within a class or a method.
   /// </summary>
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-  public sealed class AspMvcSupressViewErrorAttribute : Attribute { }
+  public sealed class AspMvcSuppressViewErrorAttribute : Attribute { }
 
   /// <summary>
   /// ASP.NET MVC attribute. Indicates that a parameter is an MVC display template.

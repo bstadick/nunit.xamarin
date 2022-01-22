@@ -1,6 +1,6 @@
 // ***********************************************************************
-// Copyright (c) 2016 NUnit Project
-//
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -29,15 +29,31 @@ using NUnit.Runner.Helpers;
 
 namespace NUnit.Runner.Services
 {
-    class XmlFileProcessor : TestResultProcessor
+    /// <summary>
+    ///     Processes the test results, writing them to xml.
+    /// </summary>
+    internal class XmlFileProcessor : TestResultProcessor
     {
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs a <see cref="XmlFileProcessor" /> to format them into xml.
+        /// </summary>
+        /// <param name="options">The test suite options.</param>
         public XmlFileProcessor(TestOptions options)
             : base(options) { }
 
+        #endregion
+
+        #region Overridden TestResultProcessor Methods
+
+        /// <inheritdoc cref="Process" />
         public override async Task Process(ResultSummary result)
         {
             if (Options.CreateXmlResultFile == false)
+            {
                 return;
+            }
 
             try
             {
@@ -55,17 +71,34 @@ namespace NUnit.Runner.Services
             }
         }
 
-        async Task WriteXmlResultFile(ResultSummary result)
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        ///     Writes the test result summary to a file.
+        /// </summary>
+        /// <param name="testResult">The test result summary to write.</param>
+        /// <returns>A <see cref="Task" /> to await.</returns>
+        private async Task WriteXmlResultFile(ResultSummary testResult)
         {
+            // Get the output directory
             string outputFolderName = Path.GetDirectoryName(Options.ResultFilePath);
 
-            Directory.CreateDirectory(outputFolderName);
-
-            using (var resultFileStream = new StreamWriter(Options.ResultFilePath, false))
+            // Create the output directory if needed
+            if (!string.IsNullOrEmpty(outputFolderName))
             {
-                var xml = result.GetTestXml().ToString();
+                Directory.CreateDirectory(outputFolderName);
+            }
+
+            // Write the results to the output file
+            using (StreamWriter resultFileStream = new StreamWriter(Options.ResultFilePath, false))
+            {
+                string xml = testResult.GetTestXml().ToString();
                 await resultFileStream.WriteAsync(xml);
             }
         }
+
+        #endregion
     }
 }

@@ -1,21 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:NUnit.Runner.ViewModel"
              x:Class="NUnit.Runner.View.ResultsView"
              Title="Test Results"
              Padding="0"
-             BackgroundColor="{DynamicResource defaultBackground}" >
-    <StackLayout Orientation="Vertical" Spacing="4" BackgroundColor="{DynamicResource defaultBackground}" >
+             BackgroundColor="{DynamicResource DefaultBackground}" >
+    <StackLayout Orientation="Vertical" Spacing="4" BackgroundColor="{DynamicResource DefaultBackground}" >
         <ScrollView Orientation="Vertical"
                     VerticalOptions="FillAndExpand" 
                     HorizontalOptions="FillAndExpand" >
             <ListView ItemsSource="{Binding Results}" 
+                      x:DataType="viewmodel:ResultsViewModel"
                       ItemSelected="ViewTest"
                       VerticalOptions="FillAndExpand" 
                       HorizontalOptions="FillAndExpand"
                       HasUnevenRows="true">
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="viewmodel:ResultViewModel">
                         <ViewCell>
                             <ViewCell.View>
                                 <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand" BackgroundColor="White" Spacing="4" Padding="0">

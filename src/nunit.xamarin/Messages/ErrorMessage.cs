@@ -1,6 +1,6 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2017 NUnit Project
-//
+// Copyright (c) 2022 NUnit Project
+// 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -24,27 +24,39 @@
 namespace NUnit.Runner.Messages
 {
     /// <summary>
-    /// Represents an error message
+    ///     Represents an error message.
     /// </summary>
-	public class ErrorMessage
-	{
+    public class ErrorMessage
+    {
+        #region Public Fields
+
         /// <summary>
-        /// The name of this message
+        ///     The name of this message.
         /// </summary>
         public const string Name = nameof(ErrorMessage);
 
+        #endregion
+
+        #region Public Properties
+
         /// <summary>
-        /// Constructs an <see cref="ErrorMessage"/> with a message
+        ///     Gets or sets the error message.
         /// </summary>
-        /// <param name="message"></param>
+        public string Message { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs an <see cref="ErrorMessage" /> with a message.
+        /// </summary>
+        /// <param name="message">The error message.</param>
         public ErrorMessage(string message)
         {
             Message = message;
         }
 
-        /// <summary>
-        /// The error message
-        /// </summary>
-        public string Message { get; set; }
+        #endregion
     }
 }
