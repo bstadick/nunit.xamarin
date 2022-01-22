@@ -35,7 +35,7 @@ namespace NUnit.Runner.Helpers
     /// <summary>
     ///     Helper class used to summarize the result of a test run.
     /// </summary>
-    internal class ResultSummary
+    public class ResultSummary
     {
         #region Private Fields
 
@@ -160,7 +160,7 @@ namespace NUnit.Runner.Helpers
         ///     Constructs a <see cref="ResultSummary"/> helper to summarize the <see cref="TestRunResult"/>.
         /// </summary>
         /// <param name="results">The test run results to summarize</param>
-        public ResultSummary(TestRunResult results)
+        internal ResultSummary(TestRunResult results)
         {
             _results = results;
             Initialize();

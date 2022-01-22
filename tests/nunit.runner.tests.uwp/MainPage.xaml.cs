@@ -52,9 +52,6 @@ namespace NUnit.Runner.Tests
                 // otherwise you must run them manually.
                 AutoRun = true,
 
-                // If True, the application will terminate automatically after running the tests.
-                //TerminateAfterExecution = true,
-
                 // Information about the tcp listener host and port.
                 // For now, send result as XML to the listening server.
                 // NOTE: Your UWP App must have Private Networks capability enabled
@@ -66,6 +63,10 @@ namespace NUnit.Runner.Tests
                 // Choose a different path for the xml result file
                 // ResultFilePath = System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.TemporaryFolder.Path, "Nunit", "Results.xml")
             };
+
+            // Sets the command to execute after running the tests such as custom handling of the results or exiting the application.
+            //nunit.Options.OnTestRunCompleted += (testResults) => Windows.UI.Xaml.Application.Current.Exit();
+
 
             LoadApplication(nunit);
         }

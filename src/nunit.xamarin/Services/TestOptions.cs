@@ -23,6 +23,8 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
+using NUnit.Runner.Helpers;
 
 namespace NUnit.Runner.Services
 {
@@ -48,11 +50,6 @@ namespace NUnit.Runner.Services
         public bool AutoRun { get; set; }
 
         /// <summary>
-        ///     Gets or sets if the application will terminate automatically after running the tests.
-        /// </summary>
-        public bool TerminateAfterExecution { get; set; }
-
-        /// <summary>
         ///     Gets information about the tcp listener host and port.
         /// </summary>
         /// <remarks>For now, send result as XML to the listening server.</remarks>
@@ -70,6 +67,21 @@ namespace NUnit.Runner.Services
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        ///     Delegate executed when the test run has completed.
+        /// </summary>
+        /// <param name="testResults">The results of the test run.</param>
+        public delegate void TestRunCompleted(ResultSummary testResults);
+
+        /// <summary>
+        ///     Event fired when the test run has completed.
+        /// </summary>
+        public event TestRunCompleted OnTestRunCompleted;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -79,6 +91,26 @@ namespace NUnit.Runner.Services
         {
             string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             ResultFilePath = Path.Combine(path, _outputXmlReportName);
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        ///     Invokes <see cref="OnTestRunCompleted"/> when the test run has completed.
+        /// </summary>
+        /// <param name="testResults">The results of the test run.</param>
+        internal async Task InvokeOnTestRunCompleted(ResultSummary testResults)
+        {
+            if (OnTestRunCompleted != null)
+            {
+                await Task.Run(() => OnTestRunCompleted?.Invoke(testResults));
+            }
+            else
+            {
+                await Task.CompletedTask;
+            }
         }
 
         #endregion

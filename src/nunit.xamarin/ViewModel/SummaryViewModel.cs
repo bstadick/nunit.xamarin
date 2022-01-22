@@ -156,11 +156,11 @@ namespace NUnit.Runner.ViewModel
             // Set the commands to display the results
             ViewAllResultsCommand = new Command(
                 async o => await Navigation.PushAsync(
-                    new ResultsView(new ResultsViewModel(_results.GetTestResults(), true))),
+                    new ResultsView(new ResultsViewModel(Results.GetTestResults(), true))),
                 o => !HasResults);
             ViewFailedResultsCommand = new Command(
                 async o => await Navigation.PushAsync(
-                    new ResultsView(new ResultsViewModel(_results.GetTestResults(), false))),
+                    new ResultsView(new ResultsViewModel(Results.GetTestResults(), false))),
                 o => !HasResults);
 
             // ReSharper restore AsyncVoidLambda
@@ -219,34 +219,16 @@ namespace NUnit.Runner.ViewModel
             _resultProcessor = TestResultProcessor.BuildChainOfResponsibility(Options);
             await _resultProcessor.Process(summary).ConfigureAwait(false);
 
-            // Report results
+            // Report results on main thread as setting these properties will invoke binding updates
             Device.BeginInvokeOnMainThread(
-                () =>
+                // ReSharper disable once AsyncVoidLambda
+                async () =>
                 {
                     Results = summary;
                     Running = false;
 
-                    if (Options.TerminateAfterExecution)
-                    {
-                        TerminateWithSuccess();
-                    }
+                    await Options.InvokeOnTestRunCompleted(summary);
                 });
-        }
-
-        /// <summary>
-        ///     Terminates the test runner.
-        /// </summary>
-        /// <remarks>This method is platform specific and not always guaranteed to work.</remarks>
-        private static void TerminateWithSuccess()
-        {
-#if __IOS__
-            var selector = new ObjCRuntime.Selector("terminateWithSuccess");
-            UIKit.UIApplication.SharedApplication.PerformSelector(selector, UIKit.UIApplication.SharedApplication, 0);
-#elif __DROID__
-            System.Environment.Exit(0);
-#elif WINDOWS_UWP
-            Windows.UI.Xaml.Application.Current.Exit();
-#endif
         }
 
         #endregion

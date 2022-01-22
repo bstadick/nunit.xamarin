@@ -56,9 +56,6 @@ namespace NUnit.Runner.Tests
                 // otherwise you must run them manually.
                 AutoRun = true,
 
-                // If True, the application will terminate automatically after running the tests.
-                //TerminateAfterExecution = true,
-
                 // Information about the tcp listener host and port.
                 // For now, send result as XML to the listening server.
                 //TcpWriterParameters = new TcpWriterInfo("192.168.0.108", 13000),
@@ -70,6 +67,9 @@ namespace NUnit.Runner.Tests
                 ResultFilePath = Path.Combine(ApplicationContext?.GetExternalFilesDir(null)?.Path ?? string.Empty,
                     Environment.DirectoryDownloads ?? string.Empty, "Nunit", "Results.xml")
             };
+
+            // Sets the command to execute after running the tests such as custom handling of the results or exiting the application.
+            //nunit.Options.OnTestRunCompleted += (testResults) => System.Environment.Exit(0);
 
             LoadApplication(nunit);
         }
