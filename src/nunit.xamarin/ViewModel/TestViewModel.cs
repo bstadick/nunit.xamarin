@@ -42,6 +42,7 @@ namespace NUnit.Runner.ViewModel
         /// <summary>
         ///     Gets the test results stack trace.
         /// </summary>
+        /// <remarks>The StackTrace may not always be populated in the test results.</remarks>
         public string StackTrace { get; }
 
         /// <summary>

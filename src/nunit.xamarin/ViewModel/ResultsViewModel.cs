@@ -49,6 +49,15 @@ namespace NUnit.Runner.ViewModel
         #region Constructors
 
         /// <summary>
+        ///     Constructs a <see cref="ResultsViewModel"/> with a <see cref="ITestResult"/> and select filtering.
+        /// </summary>
+        /// <param name="result">The result in a test run.</param>
+        /// <param name="viewAll">
+        ///     <see langword="true" /> to add all tests, otherwise only shows those that did not pass.
+        /// </param>
+        public ResultsViewModel(ITestResult result, bool viewAll) : this(new List<ITestResult> { result }, viewAll) { }
+
+        /// <summary>
         ///     Constructs a <see cref="ResultsViewModel"/> with a collection of <see cref="ITestResult"/> and select filtering.
         /// </summary>
         /// <param name="results">The collection of the results in a test run.</param>
@@ -61,35 +70,10 @@ namespace NUnit.Runner.ViewModel
             IsAllResults = viewAll;
             foreach (ITestResult result in results)
             {
-                AddTestResults(result, viewAll);
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        ///     Recursively adds the test results to the <see cref="Results" /> collection.
-        /// </summary>
-        /// <param name="result">The test or test suite results to add.</param>
-        /// <param name="viewAll">
-        ///     <see langword="true" /> to add all tests, otherwise only shows those that did not pass.
-        /// </param>
-        private void AddTestResults(ITestResult result, bool viewAll)
-        {
-            if (result.Test.IsSuite)
-            {
-                // Recursively add test results
-                foreach (ITestResult childResult in result.Children)
+                if (viewAll || result.ResultState.Status != TestStatus.Passed)
                 {
-                    AddTestResults(childResult, viewAll);
+                    Results.Add(new ResultViewModel(result));
                 }
-            }
-            else if (viewAll || result.ResultState.Status != TestStatus.Passed)
-            {
-                // Add result if all results is selected or if result is not passed
-                Results.Add(new ResultViewModel(result));
             }
         }
 

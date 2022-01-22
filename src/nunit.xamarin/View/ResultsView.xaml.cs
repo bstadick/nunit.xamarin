@@ -21,6 +21,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
+using System.Linq;
+using System.Threading.Tasks;
+using NUnit.Framework.Interfaces;
 using NUnit.Runner.ViewModel;
 using Xamarin.Forms;
 
@@ -31,6 +34,15 @@ namespace NUnit.Runner.View
     /// </summary>
     public partial class ResultsView : ContentPage
     {
+        #region Private Fields
+
+        /// <summary>
+        ///     Holds the results view <see cref="ResultsViewModel"/>.
+        /// </summary>
+        private readonly ResultsViewModel _model;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -39,8 +51,9 @@ namespace NUnit.Runner.View
         /// <param name="model">The result view model that contains the test results.</param>
         internal ResultsView(ResultsViewModel model)
         {
-            model.Navigation = Navigation;
-            BindingContext = model;
+            _model = model;
+            _model.Navigation = Navigation;
+            BindingContext = _model;
             InitializeComponent();
         }
 
@@ -55,10 +68,52 @@ namespace NUnit.Runner.View
         /// <param name="e">The event arguments.</param>
         private async void ViewTest(object sender, SelectedItemChangedEventArgs e)
         {
-            // Navigate to new test result view
-            if (e.SelectedItem is ResultViewModel result)
+            // Cast selected item to correct type
+            if (!(e.SelectedItem is ResultViewModel result))
             {
-                await Navigation.PushAsync(new TestView(new TestViewModel(result.TestResult)));
+                return;
+            }
+
+            // Unselect item to allow for reentry to item after navigating back
+            if(sender is ListView view)
+            {
+                view.SelectedItem = null;
+            }
+
+            // Navigate to new test result view
+            await NavigateToTest(result.TestResult);
+        }
+
+        /// <summary>
+        ///     Navigates to the given test result.
+        /// </summary>
+        /// <param name="result">The test result to navigate to.</param>
+        /// <returns>A <see cref="Task"/> to await.</returns>
+        private async Task NavigateToTest(ITestResult result)
+        {
+            while (true)
+            {
+                if (result.HasChildren)
+                {
+                    if (result.Children.Count() == 1)
+                    {
+                        // If only one child exists, skip to its child to simplify navigation
+                        result = result.Children.First();
+                        continue;
+                    }
+                    else
+                    {
+                        // Navigate to the child test suite
+                        await Navigation.PushAsync(new ResultsView(new ResultsViewModel(result.Children, _model.IsAllResults)));
+                    }
+                }
+                else
+                {
+                    // Navigate to the child test result (leaf)
+                    await Navigation.PushAsync(new TestView(new TestViewModel(result)));
+                }
+
+                break;
             }
         }
 
