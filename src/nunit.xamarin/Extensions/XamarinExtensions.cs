@@ -59,7 +59,8 @@ namespace NUnit.Runner.Extensions
                     }
 
                     return Xamarin.Forms.Color.FromRgb(170, 0, 0); // Dark Red
-
+                case TestStatus.Warning:
+                    return Xamarin.Forms.Color.Blue;
                 case TestStatus.Inconclusive:
                 default:
                     return Xamarin.Forms.Color.Gray;

@@ -79,5 +79,11 @@ namespace NUnit.Runner.Tests
             TestContext.WriteLine("I am about to throw!!!");
             throw new NotSupportedException("This method isn't ready yet");
         }
+
+        [Test]
+        public void Warning()
+        {
+            Assert.Warn("Warning");
+        }
     }
 }

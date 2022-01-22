@@ -114,6 +114,11 @@ namespace NUnit.Runner.Helpers
         public int InconclusiveCount { get; private set; }
 
         /// <summary>
+        ///     Gets the count of warnings.
+        /// </summary>
+        public int WarningCount { get; private set; }
+
+        /// <summary>
         ///     Returns the number of test cases that were not runnable due to errors in the signature of the class or method.
         ///     Such tests are also counted as Errors.
         /// </summary>
@@ -320,9 +325,14 @@ namespace NUnit.Runner.Helpers
                         }
 
                         break;
+                    case TestStatus.Warning:
+                        WarningCount++;
+                        break;
                     case TestStatus.Inconclusive:
+                    default:
                         InconclusiveCount++;
                         break;
+
                 }
 
                 // Apply individual state to overall state
@@ -340,6 +350,7 @@ namespace NUnit.Runner.Helpers
                         break;
                     case TestStatus.Skipped:
                     case TestStatus.Failed:
+                    case TestStatus.Warning:
                     default:
                         break;
                 }
