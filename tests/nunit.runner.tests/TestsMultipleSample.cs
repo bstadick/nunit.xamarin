@@ -28,7 +28,7 @@ namespace NUnit.Runner.Tests
 {
     [TestFixture]
     [Author("Rob Prouse")]
-    public class TestsSample
+    public class TestsMultipleSample
     {
         [SetUp]
         public void Setup() { }
@@ -39,52 +39,76 @@ namespace NUnit.Runner.Tests
 
         [Test]
         [Category("Passing")]
-        public void Pass()
+        public void PassMultiple()
         {
-            TestContext.WriteLine("Capture some output");
-            Assert.True(true);
+            Assert.Multiple(() =>
+            {
+                TestContext.WriteLine("Capture some output");
+                Assert.True(true);
+                Assert.True(true);
+            });
         }
 
         [Test]
         [Category("Failing")]
         [Author("Code Monkey")]
-        public void Fail()
+        public void FailMultiple()
         {
-            Assert.False(true);
+            Assert.Multiple(() =>
+            {
+                Assert.True(true);
+                Assert.True(false);
+                Assert.True(true);
+                Assert.True(false);
+            });
         }
 
         [Test]
         [Ignore("another time")]
-        public void Ignore()
+        public void IgnoreMultiple()
         {
-            Assert.True(false);
+            Assert.Multiple(() =>
+            {
+                Assert.True(true);
+                Assert.True(false);
+                Assert.True(true);
+                Assert.True(false);
+            });
         }
 
         [Test]
         [Explicit("This is only run on demand")]
-        public void Explicit()
+        public void ExplicitMultiple()
         {
-            Assert.True(true);
+            Assert.Multiple(() =>
+            {
+                Assert.True(true);
+                Assert.True(true);
+            });
+        }
+
+        // Note that Assert.Pass, Assert.Ignore, Assert.Inconclusive, and Assume.That may not be used inside a multiple assert block
+
+        [Test]
+        public void ErrorMultiple()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.True(true);
+                TestContext.WriteLine("I am about to throw!!!");
+                throw new NotSupportedException("This method isn't ready yet");
+            });
         }
 
         [Test]
-        public void Inconclusive()
+        public void WarningMultiple()
         {
-            Assert.Inconclusive("Inconclusive");
-        }
-
-        [Test]
-        public void Error()
-        {
-            TestContext.WriteLine("I am about to throw!!!");
-            throw new NotSupportedException("This method isn't ready yet");
-        }
-
-        [Test]
-        public void Warning()
-        {
-            Assert.Warn("Warning");
-            Assert.Warn("Another Warning");
+            Assert.Multiple(() =>
+            {
+                Assert.True(true);
+                Assert.Warn("Warning");
+                Assert.Warn("Another Warning");
+            });
         }
     }
 }
