@@ -52,6 +52,9 @@ namespace NUnit.Runner.Tests
                 // otherwise you must run them manually.
                 AutoRun = true,
 
+                // If True, adds the current calling assembly to the test assembly list.
+                //AddCurrentAssemblyForTest = true,
+
                 // Information about the tcp listener host and port.
                 // For now, send result as XML to the listening server.
                 // NOTE: Your UWP App must have Private Networks capability enabled

@@ -77,8 +77,11 @@ namespace NUnit.Runner
             // Set the main page as the summary view page
             MainPage = new NavigationPage(new SummaryView(_model));
 
-            // Add the current assembly as a test assembly
-            AddTestAssembly(Assembly.GetCallingAssembly());
+            // Add the current calling assembly as a test assembly
+            if (Options.AddCurrentAssemblyForTest)
+            {
+                AddTestAssembly(Assembly.GetCallingAssembly());
+            }
         }
 
         #endregion

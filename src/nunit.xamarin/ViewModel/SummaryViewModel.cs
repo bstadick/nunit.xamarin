@@ -74,7 +74,7 @@ namespace NUnit.Runner.ViewModel
         public TestOptions Options
         {
             get { return _options ?? (_options = new TestOptions()); }
-            set { _options = value; }
+            set { _options = value ?? new TestOptions(); }
         }
 
         /// <summary>

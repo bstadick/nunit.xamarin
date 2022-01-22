@@ -50,6 +50,11 @@ namespace NUnit.Runner.Services
         public bool AutoRun { get; set; }
 
         /// <summary>
+        ///     Gets or sets if to add the current calling assembly to the test assembly list.
+        /// </summary>
+        public bool AddCurrentAssemblyForTest { get; set; }
+
+        /// <summary>
         ///     Gets information about the tcp listener host and port.
         /// </summary>
         /// <remarks>For now, send result as XML to the listening server.</remarks>
