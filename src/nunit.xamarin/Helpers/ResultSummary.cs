@@ -82,7 +82,7 @@ namespace NUnit.Runner.Helpers
         /// </summary>
         public int RunCount
         {
-            get { return PassCount + FailureCount + ErrorCount + InconclusiveCount; }
+            get { return PassCount + FailureCount + ErrorCount + InconclusiveCount + WarningCount; }
         }
 
         /// <summary>

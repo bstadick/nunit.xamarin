@@ -24,6 +24,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using NUnit.Framework.Interfaces;
 using NUnit.Runner.Helpers;
 
 namespace NUnit.Runner.Services
@@ -53,6 +54,11 @@ namespace NUnit.Runner.Services
         ///     Gets or sets if to add the current calling assembly to the test assembly list.
         /// </summary>
         public bool AddCurrentAssemblyForTest { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the test progress listener.
+        /// </summary>
+        public ITestListener ProgressListener { get; set; }
 
         /// <summary>
         ///     Gets information about the tcp listener host and port.

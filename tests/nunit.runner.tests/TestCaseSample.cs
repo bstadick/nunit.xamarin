@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System;
+using System.Threading;
 using NUnit.Framework;
 
 namespace NUnit.Runner.Tests
@@ -68,6 +69,15 @@ namespace NUnit.Runner.Tests
             _testPasses = !_testPasses;
             TestContext.WriteLine("Test ran at {0:hh:mm:ss}", DateTime.Now);
             Assert.IsTrue(_testPasses);
+        }
+
+        [TestCase(1000)]
+        [TestCase(2000)]
+        [TestCase(1000)]
+        public void TestSlow(int timeout)
+        {
+            Thread.Sleep(timeout);
+            Assert.IsTrue(true);
         }
     }
 }

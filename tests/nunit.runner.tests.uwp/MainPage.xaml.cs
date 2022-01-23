@@ -55,6 +55,9 @@ namespace NUnit.Runner.Tests
                 // If True, adds the current calling assembly to the test assembly list.
                 //AddCurrentAssemblyForTest = true,
 
+                // Set a progress listener to update progress on each test ran.
+                //ProgressListener = new NUnit.Framework.Internal.TestProgressReporter(null),
+
                 // Information about the tcp listener host and port.
                 // For now, send result as XML to the listening server.
                 // NOTE: Your UWP App must have Private Networks capability enabled

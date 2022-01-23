@@ -22,6 +22,7 @@
 // ***********************************************************************
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -75,7 +76,11 @@ namespace NUnit.Runner.ViewModel
         public TestOptions Options
         {
             get { return _options ?? (_options = new TestOptions()); }
-            set { _options = value ?? new TestOptions(); }
+            set
+            {
+                _options = value ?? new TestOptions();
+                Package.Options = _options;
+            }
         }
 
         /// <summary>
@@ -147,7 +152,9 @@ namespace NUnit.Runner.ViewModel
         /// </summary>
         public SummaryViewModel()
         {
-            Package = new TestPackage();
+            // Create test package
+            Package = new TestPackage(Options);
+            Package.PropertyChanged += PackageOnPropertyChanged;
 
             // ReSharper disable AsyncVoidLambda
 
@@ -226,6 +233,21 @@ namespace NUnit.Runner.ViewModel
 
                     await Options.InvokeOnTestRunCompleted(summary);
                 });
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        ///     Handler for when the <see cref="Package"/> properties have changed.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void PackageOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // Notify that the underlying progress property has updated
+            OnPropertyChanged(nameof(Package));
         }
 
         #endregion

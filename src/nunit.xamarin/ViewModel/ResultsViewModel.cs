@@ -176,9 +176,9 @@ namespace NUnit.Runner.ViewModel
         }
 
         /// <summary>
-        ///     Handler for when the root view model properties change
+        ///     Handler for when the <see cref="SummaryViewModel"/> properties have changed.
         /// </summary>
-        /// <param name="sender">The send object of the event.</param>
+        /// <param name="sender">The sender of the event.</param>
         /// <param name="e">The event arguments.</param>
         private void RootModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

@@ -22,18 +22,22 @@
 // ***********************************************************************
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using NUnit.Framework.Api;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
+using NUnit.Runner.Annotations;
+using NUnit.Runner.Services;
 
 namespace NUnit.Runner.Helpers
 {
     /// <summary>
     ///     Contains all assemblies for a test run, and controls execution of tests and collection of results.
     /// </summary>
-    internal class TestPackage
+    internal class TestPackage : INotifyPropertyChanged
     {
         #region Private Fields
 
@@ -42,6 +46,33 @@ namespace NUnit.Runner.Helpers
         /// </summary>
         private readonly List<(Assembly, Dictionary<string, object>)> _testAssemblies =
             new List<(Assembly, Dictionary<string, object>)>();
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        ///     Gets or sets the user options for the test suite.
+        /// </summary>
+        public TestOptions Options { get; set; }
+
+        /// <summary>
+        ///     Gets the progress listener for running tests.
+        /// </summary>
+        public RunnerTestListener ProgressListener { get; private set; }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        ///     Constructs a <see cref="TestPackage"/>.
+        /// </summary>
+        /// <param name="options">The test options for the test package.</param>
+        public TestPackage(TestOptions options)
+        {
+            Options = options;
+        }
 
         #endregion
 
@@ -67,16 +98,44 @@ namespace NUnit.Runner.Helpers
             ITestFilter testFilter = filter ?? TestFilter.Empty;
             TestRunResult resultPackage = new TestRunResult();
 
+            // Initialize test runner for each test assembly
+            NUnitTestAssemblyRunner runner = new NUnitTestAssemblyRunner(new DefaultTestAssemblyBuilder());
             foreach ((Assembly assembly, Dictionary<string, object> options) in _testAssemblies)
             {
-                NUnitTestAssemblyRunner runner = await LoadTestAssemblyAsync(assembly, options).ConfigureAwait(false);
-                ITestResult result = await Task.Run(() => runner.Run(TestListener.NULL, testFilter))
-                                               .ConfigureAwait(false);
-                resultPackage.AddResult(result);
+                await LoadTestAssemblyAsync(runner, assembly, options).ConfigureAwait(false);
             }
 
+            // Configure the progress listener
+            long testCount = runner.CountTestCases(testFilter);
+            ProgressListener = new RunnerTestListener(Options?.ProgressListener, testCount);
+            ProgressListener.PropertyChanged += ProgressListenerOnPropertyChanged;
+
+            // Execute test runners
+            ITestResult result = await Task.Run(() => runner.Run(ProgressListener, testFilter))
+                                           .ConfigureAwait(false);
+            resultPackage.AddResult(result);
+
+            // Return the results
             resultPackage.CompleteTestRun();
             return resultPackage;
+        }
+
+        #endregion
+
+        #region Implementation of INotifyPropertyChanged
+
+        /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged" />
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        ///     Calls the <see cref="PropertyChanged" /> event for the given property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that has changed.</param>
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
@@ -86,15 +145,26 @@ namespace NUnit.Runner.Helpers
         /// <summary>
         ///     Loads the test assembly to be ran.
         /// </summary>
+        /// <param name="runner">The unit test runner.</param>
         /// <param name="assembly">The test assembly.</param>
         /// <param name="options">An optional dictionary of options for loading the assembly.</param>
-        /// <returns></returns>
-        private static async Task<NUnitTestAssemblyRunner> LoadTestAssemblyAsync(Assembly assembly,
+        /// <returns>A <see cref="Task"/> to await.</returns>
+        private static async Task LoadTestAssemblyAsync(NUnitTestAssemblyRunner runner,
+            Assembly assembly,
             Dictionary<string, object> options)
         {
-            NUnitTestAssemblyRunner runner = new NUnitTestAssemblyRunner(new DefaultTestAssemblyBuilder());
             await Task.Run(() => runner.Load(assembly, options ?? new Dictionary<string, object>()));
-            return runner;
+        }
+
+        /// <summary>
+        ///     Handler for when the <see cref="ProgressListener"/> properties have changed.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void ProgressListenerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // Notify that the underlying ProgressListener property has updated
+            OnPropertyChanged(nameof(ProgressListener));
         }
 
         #endregion
