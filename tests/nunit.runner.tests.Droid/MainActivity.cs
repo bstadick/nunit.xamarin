@@ -75,7 +75,7 @@ namespace NUnit.Runner.Tests
             };
 
             // Sets the command to execute after running the tests such as custom handling of the results or exiting the application.
-            //nunit.Options.OnTestRunCompleted += (testResults) => System.Environment.Exit(0);
+            //nunit.Options.OnTestRunCompleted += (sender, args) => System.Environment.Exit(0);
 
             LoadApplication(nunit);
         }

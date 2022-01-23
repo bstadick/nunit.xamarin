@@ -231,7 +231,7 @@ namespace NUnit.Runner.ViewModel
                     Results = summary;
                     Running = false;
 
-                    await Options.InvokeOnTestRunCompleted(summary);
+                    await Options.InvokeOnTestRunCompleted(this, summary);
                 });
         }
 

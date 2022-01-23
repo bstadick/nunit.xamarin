@@ -85,7 +85,7 @@ namespace NUnit.Runner.Tests
             };
 
             // Sets the command to execute after running the tests such as custom handling of the results or exiting the application.
-            //nunit.Options.OnTestRunCompleted += (testResults) =>
+            //nunit.Options.OnTestRunCompleted += (sender, args) =>
             //{
             //    ObjCRuntime.Selector selector = new ObjCRuntime.Selector("terminateWithSuccess");
             //    UIKit.UIApplication.SharedApplication.PerformSelector(selector, UIKit.UIApplication.SharedApplication,

@@ -81,15 +81,9 @@ namespace NUnit.Runner.Services
         #region Events
 
         /// <summary>
-        ///     Delegate executed when the test run has completed.
-        /// </summary>
-        /// <param name="testResults">The results of the test run.</param>
-        public delegate void TestRunCompleted(ResultSummary testResults);
-
-        /// <summary>
         ///     Event fired when the test run has completed.
         /// </summary>
-        public event TestRunCompleted OnTestRunCompleted;
+        public event EventHandler<TestRunCompletedEventArgs> OnTestRunCompleted;
 
         #endregion
 
@@ -111,12 +105,14 @@ namespace NUnit.Runner.Services
         /// <summary>
         ///     Invokes <see cref="OnTestRunCompleted"/> when the test run has completed.
         /// </summary>
+        /// <param name="sender">The sender of the event.</param>
         /// <param name="testResults">The results of the test run.</param>
-        internal async Task InvokeOnTestRunCompleted(ResultSummary testResults)
+        internal async Task InvokeOnTestRunCompleted(object sender, ResultSummary testResults)
         {
             if (OnTestRunCompleted != null)
             {
-                await Task.Run(() => OnTestRunCompleted?.Invoke(testResults));
+                await Task.Run(() =>
+                    OnTestRunCompleted?.Invoke(sender, new TestRunCompletedEventArgs { TestResults = testResults }));
             }
             else
             {
@@ -125,5 +121,16 @@ namespace NUnit.Runner.Services
         }
 
         #endregion
+    }
+
+    /// <summary>
+    ///     Event arguments for the <see cref="TestOptions.OnTestRunCompleted"/> event.
+    /// </summary>
+    public class TestRunCompletedEventArgs : EventArgs
+    {
+        /// <summary>
+        ///     Gets or sets the test result summary.
+        /// </summary>
+        public ResultSummary TestResults { get; set; }
     }
 }

@@ -71,7 +71,7 @@ namespace NUnit.Runner.Tests
             };
 
             // Sets the command to execute after running the tests such as custom handling of the results or exiting the application.
-            //nunit.Options.OnTestRunCompleted += (testResults) => Windows.UI.Xaml.Application.Current.Exit();
+            //nunit.Options.OnTestRunCompleted += (sender, args) => Windows.UI.Xaml.Application.Current.Exit();
 
 
             LoadApplication(nunit);
