@@ -8,8 +8,8 @@
             <!-- Visual Elements -->
             <Color x:Key="DefaultBackground">White</Color>
             <Color x:Key="WindowsBackground">White</Color>
-            
-        	<!-- Buttons -->
+
+            <!-- Buttons -->
             <Style TargetType="Button">
                 <Setter Property="BackgroundColor" Value="#005B0C" />
                 <Setter Property="BorderColor" Value="#005B0C" />
@@ -23,6 +23,9 @@
             <Style TargetType="Label">
                 <Setter Property="TextColor" Value="#303030" />
             </Style>
+
+            <!-- Strings -->
+            <x:String x:Key="NoneString">&lt;none&gt;</x:String>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

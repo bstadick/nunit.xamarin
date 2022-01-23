@@ -69,7 +69,7 @@ namespace NUnit.Runner.View
         private async void ViewTest(object sender, SelectedItemChangedEventArgs e)
         {
             // Cast selected item to correct type
-            if (!(e.SelectedItem is ResultViewModel result))
+            if (!(e.SelectedItem is TestViewModel result))
             {
                 return;
             }
@@ -104,13 +104,13 @@ namespace NUnit.Runner.View
                     else
                     {
                         // Navigate to the child test suite
-                        await Navigation.PushAsync(new ResultsView(new ResultsViewModel(result.Children, _model.IsAllResults)));
+                        await Navigation.PushAsync(new ResultsView(new ResultsViewModel(_model.RootModel, result.Children, _model.IsAllResults)));
                     }
                 }
                 else
                 {
                     // Navigate to the child test result (leaf)
-                    await Navigation.PushAsync(new TestView(new TestViewModel(result)));
+                    await Navigation.PushAsync(new TestView(new TestViewModel(_model.RootModel, result)));
                 }
 
                 break;

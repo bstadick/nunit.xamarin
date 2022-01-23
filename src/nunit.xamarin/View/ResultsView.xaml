@@ -2,11 +2,27 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:NUnit.Runner.ViewModel"
+             xmlns:helpers="clr-namespace:NUnit.Runner.Helpers;assembly=nunit.xamarin"
              x:Class="NUnit.Runner.View.ResultsView"
              Title="Test Results"
              Padding="0"
              BackgroundColor="{DynamicResource DefaultBackground}" >
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <helpers:StringOrNoneConverter x:Key="StringOrNone" />
+            <helpers:ResultStateToColorConverter x:Key="ResultStateToColor" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <StackLayout Orientation="Vertical" Spacing="4" BackgroundColor="{DynamicResource DefaultBackground}" >
+        <Button Text="Run Tests" Command="{Binding RunTestsCommand}"  HorizontalOptions="FillAndExpand">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button" Binding="{Binding RootModel.Running}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+
         <ScrollView Orientation="Vertical"
                     VerticalOptions="FillAndExpand" 
                     HorizontalOptions="FillAndExpand" >
@@ -17,16 +33,18 @@
                       HorizontalOptions="FillAndExpand"
                       HasUnevenRows="true">
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodel:ResultViewModel">
+                    <DataTemplate x:DataType="viewmodel:TestViewModel">
                         <ViewCell>
                             <ViewCell.View>
                                 <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand" BackgroundColor="White" Spacing="4" Padding="0">
-                                    <BoxView Color="{Binding Color}" 
+                                    <BoxView Color="{Binding TestResult.ResultState, Converter={StaticResource ResultStateToColor}}" 
                                            WidthRequest="10"
                                            VerticalOptions="FillAndExpand"/>
 		                            <StackLayout Orientation="Vertical" Spacing="4" Padding="4" HorizontalOptions="StartAndExpand">
-		                                <Label Text="{Binding Name}" FontSize="Medium" />
-                                        <Label Text="{Binding Parent}" LineBreakMode="MiddleTruncation" TextColor="#4C4C4C" FontSize="Small" />
+                                        <Label Text="{Binding TestResult.Name, Converter={StaticResource StringOrNone}}"
+                                               FontSize="Medium" />
+                                        <Label Text="{Binding TestResult.Test.Parent.FullName, FallbackValue={StaticResource NoneString}, Converter={StaticResource StringOrNone}}"
+                                               LineBreakMode="MiddleTruncation" TextColor="#4C4C4C" FontSize="Small" />
 		                            </StackLayout>
                                 </StackLayout>
                             </ViewCell.View>

@@ -2,21 +2,41 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:NUnit.Runner.ViewModel"
-             x:DataType="viewmodel:ResultViewModel"
+             xmlns:helpers="clr-namespace:NUnit.Runner.Helpers;assembly=nunit.xamarin"
+             x:DataType="viewmodel:TestViewModel"
              x:Class="NUnit.Runner.View.TestView"
              Title="{Binding TestResult.ResultState.Status}"
              Padding="0"
              BackgroundColor="{DynamicResource DefaultBackground}" >
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <helpers:StringOrNoneConverter x:Key="StringOrNone" />
+            <helpers:TestPropertiesToStringConverter x:Key="TestPropertiesToString" />
+            <helpers:ResultStateToColorConverter x:Key="ResultStateToColor" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ScrollView Orientation="Vertical"
                 VerticalOptions="FillAndExpand" 
                 HorizontalOptions="FillAndExpand" 
                 Padding="10"
                 BackgroundColor="{DynamicResource DefaultBackground}" >
         <StackLayout Orientation="Vertical" Spacing="8" Padding="8"  HorizontalOptions="FillAndExpand" BackgroundColor="White">
-            <Label Text="{Binding TestResult.Name}" TextColor="{Binding Color}" FontAttributes="Bold" FontSize="Large" />
-            <Label Text="{Binding TestResult.Test.Parent.FullName, FallbackValue='Null Parent'}" LineBreakMode="MiddleTruncation" FontSize="Small" />
-            
-                <StackLayout Orientation="Horizontal" Spacing="4">
+            <Label Text="{Binding TestResult.Name, Converter={StaticResource StringOrNone}}"
+                   TextColor="{Binding TestResult.ResultState, Converter={StaticResource ResultStateToColor}}"
+                   FontAttributes="Bold" FontSize="Large" />
+            <Label Text="{Binding TestResult.Test.Parent.FullName, FallbackValue={StaticResource NoneString}, Converter={StaticResource StringOrNone}}"
+                   LineBreakMode="MiddleTruncation" FontSize="Small" />
+
+            <Button Text="Run Tests" Command="{Binding RunTestsCommand}"  HorizontalOptions="FillAndExpand">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding RootModel.Running}" Value="True">
+                        <Setter Property="IsEnabled" Value="False" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+
+            <StackLayout Orientation="Horizontal" Spacing="4">
                 <Label Text="Duration:" FontSize="Small" FontAttributes="Bold" />
                 <Label Text="{Binding TestResult.Duration, StringFormat='{0:F3} seconds'}" FontSize="Small" />
             </StackLayout>
@@ -27,16 +47,20 @@
             </StackLayout>
 
             <Label Text="Properties:" FontAttributes="Bold" FontSize="Medium" />
-            <Label Text="{Binding Properties}" x:DataType="viewmodel:TestViewModel" LineBreakMode="WordWrap" FontSize="Small" />
+            <Label Text="{Binding TestResult.Test.Properties, Converter={StaticResource TestPropertiesToString}}"
+                   LineBreakMode="WordWrap" FontSize="Small" />
 
             <Label Text="Message:" FontAttributes="Bold" FontSize="Medium" />
-            <Label Text="{Binding Message}" x:DataType="viewmodel:TestViewModel" LineBreakMode="WordWrap" FontSize="Small" />
+            <Label Text="{Binding TestResult.Message, Converter={StaticResource StringOrNone}}"
+                   LineBreakMode="WordWrap" FontSize="Small" />
 
             <Label Text="Output:" FontAttributes="Bold" FontSize="Medium" />
-            <Label Text="{Binding Output}" x:DataType="viewmodel:TestViewModel" LineBreakMode="WordWrap" FontSize="Small" />
+            <Label Text="{Binding TestResult.Output, Converter={StaticResource StringOrNone}}"
+                   LineBreakMode="WordWrap" FontSize="Small" />
 
             <Label Text="Stack Trace:" FontAttributes="Bold" FontSize="Medium" />
-            <Label Text="{Binding StackTrace}" x:DataType="viewmodel:TestViewModel" LineBreakMode="CharacterWrap" FontSize="Small" />
+            <Label Text="{Binding TestResult.StackTrace, Converter={StaticResource StringOrNone}}"
+                   LineBreakMode="CharacterWrap" FontSize="Small" />
         </StackLayout>
     </ScrollView>
 </ContentPage>

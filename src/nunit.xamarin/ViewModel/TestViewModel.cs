@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Copyright (c) 2022 NUnit Project
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -21,34 +21,64 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
-using System;
-using System.Text;
+using System.Windows.Input;
 using NUnit.Framework.Interfaces;
+using NUnit.Runner.Helpers.Filter;
+using Xamarin.Forms;
 
 namespace NUnit.Runner.ViewModel
 {
     /// <summary>
-    ///     The individual test result detailed view model.
+    ///     The individual test result summary view model.
     /// </summary>
-    internal class TestViewModel : ResultViewModel
+    internal class TestViewModel : BaseViewModel
     {
+        #region Private Fields
+
+        /// <summary>
+        ///     Holds the <see cref="ITestResult"/>.
+        /// </summary>
+        private ITestResult _result;
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
-        ///     Gets the test result output.
+        ///     Gets the root <see cref="SummaryViewModel"/>.
         /// </summary>
-        public string Output { get; }
+        public SummaryViewModel RootModel { get; }
 
         /// <summary>
-        ///     Gets the test results stack trace.
+        ///     Gets the test result.
         /// </summary>
-        /// <remarks>The StackTrace may not always be populated in the test results.</remarks>
-        public string StackTrace { get; }
+        public ITestResult TestResult
+        {
+            get { return _result; }
+            private set
+            {
+                if (Equals(value, _result))
+                {
+                    return;
+                }
+
+                _result = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
-        ///     Gets the test properties.
+        ///     Gets or sets the command to run the tests.
         /// </summary>
-        public string Properties { get; }
+        public ICommand RunTestsCommand { get; set; }
+
+        /// <summary>
+        ///     Gets the test filter corresponding to the test result.
+        /// </summary>
+        public ITestFilter Filter
+        {
+            get { return NUnitFilter.Where.Test(TestResult.Test.FullName).Build().Filter; }
+        }
 
         #endregion
 
@@ -57,24 +87,16 @@ namespace NUnit.Runner.ViewModel
         /// <summary>
         ///     Constructs a <see cref="TestViewModel"/> with an individual <see cref="ITestResult"/>.
         /// </summary>
+        /// <param name="rootModel">The root view model.</param>
         /// <param name="result">The result of an individual test.</param>
-        public TestViewModel(ITestResult result) : base(result)
+        public TestViewModel(SummaryViewModel rootModel, ITestResult result)
         {
-            Output = StringOrNone(result.Output);
-            StackTrace = StringOrNone(result.StackTrace);
+            RootModel = rootModel;
+            TestResult = result;
 
-            // Format test properties
-            StringBuilder propStringBuilder = new StringBuilder();
-            IPropertyBag props = result.Test.Properties;
-            foreach (string key in props.Keys)
-            {
-                foreach (object value in props[key])
-                {
-                    propStringBuilder.AppendFormat("{0} = {1}{2}", key, value, Environment.NewLine);
-                }
-            }
-
-            Properties = StringOrNone(propStringBuilder.ToString());
+            // ReSharper disable once AsyncVoidLambda
+            //RunTestsCommand = new Command(async o => await RootModel.ExecuteTests(Filter),
+            //    o => !RootModel.Running);
         }
 
         #endregion

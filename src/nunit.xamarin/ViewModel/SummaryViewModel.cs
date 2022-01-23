@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NUnit.Framework.Interfaces;
 using NUnit.Runner.Helpers;
 using NUnit.Runner.Services;
 using NUnit.Runner.View;
@@ -38,11 +39,6 @@ namespace NUnit.Runner.ViewModel
     internal class SummaryViewModel : BaseViewModel
     {
         #region Private Fields
-
-        /// <summary>
-        ///     Holds the test suite package.
-        /// </summary>
-        private readonly TestPackage _testPackage;
 
         /// <summary>
         ///     Holds the user test options.
@@ -67,6 +63,11 @@ namespace NUnit.Runner.ViewModel
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        ///     Gets the <see cref="TestPackage"/> used to run the tests.
+        /// </summary>
+        public TestPackage Package { get; }
 
         /// <summary>
         ///     Gets or sets the user options for the test suite.
@@ -125,17 +126,17 @@ namespace NUnit.Runner.ViewModel
         /// <summary>
         ///     Gets or sets the command to run the tests.
         /// </summary>
-        public ICommand RunTestsCommand { set; get; }
+        public ICommand RunTestsCommand { get; set; }
 
         /// <summary>
         ///     Gets or sets the command to view all test results.
         /// </summary>
-        public ICommand ViewAllResultsCommand { set; get; }
+        public ICommand ViewAllResultsCommand { get; set; }
 
         /// <summary>
         ///     Gets or sets the command to view all failed test results.
         /// </summary>
-        public ICommand ViewFailedResultsCommand { set; get; }
+        public ICommand ViewFailedResultsCommand { get; set; }
 
         #endregion
 
@@ -146,21 +147,21 @@ namespace NUnit.Runner.ViewModel
         /// </summary>
         public SummaryViewModel()
         {
-            _testPackage = new TestPackage();
+            Package = new TestPackage();
 
             // ReSharper disable AsyncVoidLambda
 
             // Set the command to run the tests
-            RunTestsCommand = new Command(async o => await ExecuteTestsAsync(), o => !Running);
+            RunTestsCommand = new Command(async o => await ExecuteTests(), o => !Running);
 
             // Set the commands to display the results
             ViewAllResultsCommand = new Command(
                 async o => await Navigation.PushAsync(
-                    new ResultsView(new ResultsViewModel(Results.GetTestResults(), true))),
+                    new ResultsView(new ResultsViewModel(this, Results.GetTestResults(), true))),
                 o => !HasResults);
             ViewFailedResultsCommand = new Command(
                 async o => await Navigation.PushAsync(
-                    new ResultsView(new ResultsViewModel(Results.GetTestResults(), false))),
+                    new ResultsView(new ResultsViewModel(this, Results.GetTestResults(), false))),
                 o => !HasResults);
 
             // ReSharper restore AsyncVoidLambda
@@ -195,24 +196,20 @@ namespace NUnit.Runner.ViewModel
         /// <param name="options">The test options.</param>
         internal void AddTest(Assembly testAssembly, Dictionary<string, object> options = null)
         {
-            _testPackage.AddAssembly(testAssembly, options);
+            Package.AddAssembly(testAssembly, options);
         }
-
-        #endregion
-
-        #region Private Methods
 
         /// <summary>
         ///     Executes the tests.
         /// </summary>
         /// <returns>A <see cref="Task" /> to await.</returns>
-        private async Task ExecuteTestsAsync()
+        internal async Task ExecuteTests(ITestFilter filter = null)
         {
             Running = true;
             Results = null;
 
             // Run tests
-            TestRunResult results = await _testPackage.ExecuteTests();
+            TestRunResult results = await Package.ExecuteTests(filter);
 
             // Process results
             ResultSummary summary = new ResultSummary(results);

@@ -21,6 +21,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // ***********************************************************************
 
+using System;
 using NUnit.Framework;
 
 namespace NUnit.Runner.Tests
@@ -28,6 +29,8 @@ namespace NUnit.Runner.Tests
     [TestFixture]
     public class TestCaseSample
     {
+        private static bool _testPasses;
+
         [TestCase(1, 1, ExpectedResult = 2)]
         [TestCase(10, 10, ExpectedResult = 20)]
         [TestCase(12, 13, ExpectedResult = 24)] // Deliberate failure
@@ -51,5 +54,20 @@ namespace NUnit.Runner.Tests
             TestContext.WriteLine("The passed-in value associated with 'Parameter' is: {0}", val?? "null");
             Assert.True(val == null || val == "Value");
         }
-}
+
+        [Test]
+        public void TestNonDeterministic()
+        {
+            TestContext.WriteLine("Test ran at {0:hh:mm:ss}", DateTime.Now);
+            Assert.IsTrue(true);
+        }
+
+        [Test]
+        public void TestNonDeterministicToggle()
+        {
+            _testPasses = !_testPasses;
+            TestContext.WriteLine("Test ran at {0:hh:mm:ss}", DateTime.Now);
+            Assert.IsTrue(_testPasses);
+        }
+    }
 }
